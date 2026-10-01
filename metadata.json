@@ -1,0 +1,6 @@
+{
+  "name": "AI-Ready Data Fabric Navigator 2025-2026",
+  "description": "Hệ thống so sánh và đánh giá chuyên sâu các giải pháp AI-Ready Data Fabric hàng đầu thị trường theo chuẩn Gartner 2025–2026 và kịch bản ngân hàng Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
