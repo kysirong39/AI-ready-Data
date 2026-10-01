@@ -14,7 +14,7 @@ export const GitHubDeployModal: React.FC<GitHubDeployModalProps> = ({
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [githubUsername, setGithubUsername] = useState('kysirong39');
-  const [repoName, setRepoName] = useState('ai-ready-data-fabric');
+  const [repoName, setRepoName] = useState('AI-ready-Data');
 
   if (!isOpen) return null;
 
@@ -24,21 +24,16 @@ export const GitHubDeployModal: React.FC<GitHubDeployModalProps> = ({
     setTimeout(() => setCopiedIndex(null), 2500);
   };
 
-  const gitCommands = `# Bước 1: Mở terminal tại thư mục mã nguồn dự án
-git init
-git config user.name "${githubUsername}"
-git config user.email "${userEmail}"
+  const gitCommands = `# Bước 1: Mở terminal tại thư mục dự án
 git add .
-git commit -m "feat: Triển khai web so sánh đánh giá các giải pháp AI-Ready Data Fabric 2025-2026"
+git commit -m "fix: Khắc phục triệt để lỗi 404 main.tsx trên GitHub Pages (thêm docs/ và workflow CI/CD)"
 git branch -M main
 
-# Bước 2: Thêm remote repo trên GitHub của bạn
-git remote add origin https://github.com/${githubUsername}/${repoName}.git
-
-# Bước 3: Đẩy toàn bộ mã nguồn lên nhánh main
+# Bước 2: Đẩy bản cập nhật lên GitHub
 git push -u origin main`;
 
-  const ghCliCommand = `gh repo create ${githubUsername}/${repoName} --public --source=. --remote=origin --push`;
+  const pushGhPagesCommand = `# Đẩy trực tiếp nhánh gh-pages đã build sẵn:
+git push -u origin gh-pages`;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
@@ -137,18 +132,18 @@ git push -u origin main`;
             </pre>
           </div>
 
-          {/* Option 2: GitHub CLI */}
+          {/* Push Commands */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-bold text-neutral-900 flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-purple-600" />
-                Cách 2: Sử dụng GitHub CLI (Tự động tạo Repo và Push)
+                <Terminal className="w-3.5 h-3.5 text-blue-600" />
+                Lệnh đẩy mã nguồn lên GitHub (Đã bao gồm thư mục /docs biên dịch sẵn)
               </span>
               <button
-                onClick={() => copyToClipboard(ghCliCommand, 2)}
+                onClick={() => copyToClipboard(gitCommands, 1)}
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium bg-neutral-100 hover:bg-neutral-200 rounded border border-neutral-300 text-neutral-800 transition-colors cursor-pointer"
               >
-                {copiedIndex === 2 ? (
+                {copiedIndex === 1 ? (
                   <>
                     <Check className="w-3 h-3 text-emerald-600" />
                     <span>Đã sao chép</span>
@@ -161,29 +156,37 @@ git push -u origin main`;
                 )}
               </button>
             </div>
-            <pre className="p-3 bg-neutral-950 text-neutral-100 rounded-lg font-mono text-[11px] overflow-x-auto leading-relaxed border border-neutral-800">
-              {ghCliCommand}
+            <pre className="p-3 bg-neutral-950 text-neutral-100 rounded-lg font-mono text-[11px] overflow-x-auto leading-relaxed border border-neutral-800 custom-scrollbar">
+              {gitCommands}
             </pre>
           </div>
 
-          {/* Pre-configured CI/CD Workflow */}
-          <div className="p-4 bg-teal-50/70 rounded-xl border border-teal-200 space-y-2">
-            <div className="flex items-center gap-2 font-bold text-teal-900">
-              <Globe className="w-4 h-4 text-teal-700" />
-              Tự động hóa triển khai GitHub Pages (Đã sẵn sàng!)
+          {/* Cách sửa triệt để lỗi 404 trên GitHub Pages */}
+          <div className="p-4 bg-amber-50/80 rounded-xl border border-amber-200 space-y-3">
+            <div className="font-bold text-amber-950 flex items-center gap-1.5 text-xs">
+              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              Cách khắc phục lỗi "Failed to load resource: main.tsx 404" (Chọn 1 trong 2 cách):
             </div>
-            <p className="text-neutral-700 leading-relaxed text-xs">
-              Dự án đã được tích hợp sẵn tệp workflow{' '}
-              <code className="bg-teal-100/80 px-1 py-0.5 rounded font-mono text-[11px] text-teal-900">
-                .github/workflows/deploy.yml
-              </code>
-              . Ngay khi bạn chạy lệnh <code className="font-mono">git push</code>, GitHub Actions sẽ tự động biên dịch và phát hành website trực tuyến miễn phí tại:
-            </p>
-            <div className="p-2.5 bg-white rounded-lg border border-teal-200 font-mono text-teal-800 font-semibold text-xs">
-              https://{githubUsername}.github.io/{repoName}/
-            </div>
-            <div className="text-[11px] text-teal-900">
-              * Chỉ cần vào <strong>Settings</strong> → <strong>Pages</strong> trên GitHub, tại mục <strong>Source</strong> chọn <strong>GitHub Actions</strong>.
+
+            <div className="space-y-2 text-xs text-neutral-800">
+              <div className="p-2.5 bg-white rounded-lg border border-amber-200">
+                <strong className="text-amber-900 block mb-0.5">Cách 1: Triển khai từ thư mục /docs (Nhanh nhất - Không cần đợi Build)</strong>
+                <ol className="list-decimal list-inside space-y-0.5 text-neutral-700 text-[11px]">
+                  <li>Vào repo trên GitHub: <strong>Settings</strong> → <strong>Pages</strong>.</li>
+                  <li>Mục <strong>Build and deployment</strong> → <strong>Source</strong>: chọn <strong>Deploy from a branch</strong>.</li>
+                  <li>Dòng <strong>Branch</strong>: chọn <strong>main</strong>, ô thư mục bên cạnh chọn <strong>/docs</strong> (thay vì <em>/ (root)</em>) rồi bấm <strong>Save</strong>.</li>
+                  <li>Đợi 30 giây và tải lại trang, web sẽ hoạt động 100%!</li>
+                </ol>
+              </div>
+
+              <div className="p-2.5 bg-white rounded-lg border border-amber-200">
+                <strong className="text-amber-900 block mb-0.5">Cách 2: Triển khai tự động bằng GitHub Actions</strong>
+                <ol className="list-decimal list-inside space-y-0.5 text-neutral-700 text-[11px]">
+                  <li>Vào repo trên GitHub: <strong>Settings</strong> → <strong>Pages</strong>.</li>
+                  <li>Mục <strong>Build and deployment</strong> → <strong>Source</strong>: chọn <strong>GitHub Actions</strong>.</li>
+                  <li>Workflow <code className="font-mono text-[10px] bg-neutral-100 px-1">.github/workflows/deploy.yml</code> đã được cấu hình <code className="font-mono text-[10px] bg-neutral-100 px-1">--legacy-peer-deps</code> sẽ tự động build và deploy.</li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
